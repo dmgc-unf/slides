@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación</title>
+
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/night.css">
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #111;
+        }
+
+        .reveal {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="reveal" id="reveal-deck">
+        <div class="slides" id="slides-container">
+            <section>Cargando presentación...</section>
+        </div>
+    </div>
+
+    <!-- Supabase & Reveal.js Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/markdown/markdown.js"></script>
+
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://jomqgtqtwgaxdgwywhtg.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvbXFndHF0d2dheGRnd3l3aHRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MTkyNDgsImV4cCI6MjA5ODQ5NTI0OH0.aTKt1oLBpyMMNL0S2Lcv3C1ZyOkmDcxNP2J2BgxluBg'
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function cargarPresentacionPublica() {
+            // Obtener el título desde la URL (?title=Nombre)
+            const urlParams = new URLSearchParams(window.location.search);
+            const title = urlParams.get('title');
+
+            if (!title) {
+                document.getElementById('slides-container').innerHTML = '<section>⚠️ No se especificó el título en la URL.</section>';
+                return;
+            }
+
+            // Consulta el Markdown y la configuración del tema
+            const {data, error} = await supabaseClient
+                .from('presentations')
+                .select('content_markdown, theme_config')
+                .eq('title', title)
+                .single();
+
+            if (error || !data) {
+                document.getElementById('slides-container').innerHTML = '<section>⚠️ Presentación no encontrada.</section>';
+                return;
+            }
+
+            // Cargar el Markdown en la estructura
+            document.getElementById('slides-container').innerHTML = `
+        <section data-markdown>
+          <textarea data-template>${data.content_markdown}</textarea>
+        </section>
+      `;
+
+            // Aplicar el gradiente guardado (o uno por defecto si no existe)
+            const revealDeck = document.getElementById('reveal-deck');
+            const gradienteGuardado = data.theme_config?.gradient || 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)';
+            revealDeck.style.background = gradienteGuardado;
+
+            // Inicializar Reveal.js en pantalla completa
+            const deck = new Reveal({
+                plugins: [RevealMarkdown],
+                hash: true
+            });
+
+            deck.initialize();
+        }
+
+        cargarPresentacionPublica();
+    </script>
+</body>
+
+</html>
