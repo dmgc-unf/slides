@@ -25,6 +25,10 @@
             width: 100vw;
             height: 100vh;
         }
+
+        .reveal .slides section {
+            text-align: left;
+        }
     </style>
 </head>
 
@@ -88,7 +92,7 @@
                 hash: true
             });
 
-            deck.initialize();
+            deck.initialize({center: false});
         }
 
         cargarPresentacionPublica();
