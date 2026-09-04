@@ -2,68 +2,72 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor Reveal.js + Supabase</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor Reveal.js + Supabase</title>
 
-    <!-- Vuetify CSS & Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@3.5.2/dist/vuetify.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <!-- Vuetify CSS & Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@3.5.2/dist/vuetify.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
 
-    <!-- Reveal.js CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/night.css">
+  <!-- Reveal.js CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/night.css">
 
-    <style>
-        .editor-textarea textarea {
-            font-family: 'Fira Code', 'Courier New', monospace !important;
-            font-size: 14px;
-        }
+  <style>
+    .editor-textarea textarea {
+      font-family: 'Fira Code', 'Courier New', monospace !important;
+      font-size: 14px;
+    }
 
-        .reveal-container {
-            width: 100%;
-            height: 480px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 8px;
-            overflow: hidden;
-            background: #111;
-        }
+    .reveal-container {
+      width: 100%;
+      height: 480px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #111;
+    }
 
-        .title-input {
-            max-width: 300px;
-        }
-    </style>
+    .title-input {
+      max-width: 300px;
+    }
+
+    .reveal .slides section {
+      text-align: left;
+    }
+  </style>
 </head>
 
 <body>
 
-    <div id="app"></div>
+  <div id="app"></div>
 
-    <!-- SDK de Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- SDK de Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Vue 3 & Vuetify 3 Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.19/dist/vue.global.prod.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vuetify@3.5.2/dist/vuetify.min.js"></script>
+  <!-- Vue 3 & Vuetify 3 Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.19/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@3.5.2/dist/vuetify.min.js"></script>
 
-    <!-- Reveal.js & Plugin Markdown -->
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/markdown/markdown.js"></script>
+  <!-- Reveal.js & Plugin Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/markdown/markdown.js"></script>
 
-    <script>
-        // CONFIGURACIÓN DE SUPABASE (Nombre de variable corregido)
-        const SUPABASE_URL = 'https://jomqgtqtwgaxdgwywhtg.supabase.co'
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvbXFndHF0d2dheGRnd3l3aHRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MTkyNDgsImV4cCI6MjA5ODQ5NTI0OH0.aTKt1oLBpyMMNL0S2Lcv3C1ZyOkmDcxNP2J2BgxluBg'
+  <script>
+    // CONFIGURACIÓN DE SUPABASE (Nombre de variable corregido)
+    const SUPABASE_URL = 'https://jomqgtqtwgaxdgwywhtg.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvbXFndHF0d2dheGRnd3l3aHRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MTkyNDgsImV4cCI6MjA5ODQ5NTI0OH0.aTKt1oLBpyMMNL0S2Lcv3C1ZyOkmDcxNP2J2BgxluBg'
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const {createApp, ref, onMounted, nextTick} = Vue;
-        const {createVuetify} = Vuetify;
+    const {createApp, ref, onMounted, nextTick} = Vue;
+    const {createVuetify} = Vuetify;
 
-        const vuetify = createVuetify({theme: {defaultTheme: 'dark'}});
+    const vuetify = createVuetify({theme: {defaultTheme: 'dark'}});
 
-        const App = {
-            template: `
+    const App = {
+      template: `
       <v-app>
         <!-- Header con Campo de Título y Botón Guardar -->
         <v-app-bar color="surface-variant" density="compact" elevation="2">
@@ -76,21 +80,21 @@
           </v-app-bar-title>
 
           <!-- Menú para Cargar Presentaciones Guardadas -->
-<v-select
-  v-model="selectedPresentationId"
-  :items="listaPresentaciones"
-  item-title="title"
-  item-value="id"
-  placeholder="Abrir guardada..."
-  density="compact"
-  variant="solo-filled"
-  hide-details
-  class="mx-2"
-  style="max-width: 220px;"
-  prepend-inner-icon="mdi-folder-open"
-  @update:model-value="cargarPresentacionSeleccionada"
-  :loading="cargandoLista"
-></v-select>
+          <v-select
+            v-model="selectedPresentationId"
+            :items="listaPresentaciones"
+            item-title="title"
+            item-value="id"
+            placeholder="Abrir guardada..."
+            density="compact"
+            variant="solo-filled"
+            hide-details
+            class="mx-2"
+            style="max-width: 220px;"
+            prepend-inner-icon="mdi-folder-open"
+            @update:model-value="cargarPresentacionSeleccionada"
+            :loading="cargandoLista"
+          ></v-select>
 
           <!-- Input para el Título del Proyecto -->
           <v-text-field
@@ -123,65 +127,96 @@
                 <v-card class="pa-3 flex-grow-1" elevation="3">
                   
                   <div class="d-flex flex-wrap gap-2 mb-3">
-                    <v-btn size="small" color="teal" variant="flat" prepend-icon="mdi-image-plus" @click="triggerFileInput" :loading="subiendoImagen">
-                      Subir Imagen
+                    <v-btn size="small" color="teal" variant="flat" prepend-icon="mdi-image-plus" @click="triggerFileInput" :loading="subiendoImagen">                    
                     </v-btn>
                     <input type="file" ref="fileInput" accept="image/*" class="d-none" @change="subirImagenSupabase">
 
                     <v-btn size="small" color="red" variant="flat" prepend-icon="mdi-youtube" @click="dialogYouTube = true">
-                      Video YouTube
                     </v-btn>
 
                     <v-divider vertical class="mx-1"></v-divider>
 
-                    <v-btn size="small" color="primary" variant="tonal" prepend-icon="mdi-columns" @click="insertarDosColumnas">
-                      2 Columnas
-                    </v-btn>
+                   
                     <v-btn size="small" color="info" variant="tonal" prepend-icon="mdi-web" @click="insertarIframe">
-                      iFrame Foro
+    
                     </v-btn>
+      
+                    <!-- Botón para insertar columnas -->
+                  
+                     <v-btn density="compact" 
+                      variant="flat" size="small" variant="tonal" icon="mdi-view-column" title = "columns" @click="insertarDosColumnas">
+                      
+                    </v-btn>
+                    <!-- Botón para insertar salto doble HTML -->
+                    <v-btn 
+                      density="compact" 
+                      variant="flat"
+                      size="small"                            
+                      icon="mdi-format-line-spacing" 
+                      @click="insertarSaltoDobleHTML"
+                    >                      
+                    </v-btn>
+
+                    <!-- Grupo de Alineación de Texto -->
+                    <v-btn-toggle density="compact" variant="flat">
+                      <v-btn size="small" color="grey-darken-2" icon="mdi-format-align-left" @click="alinearTexto('left')" title="Alinear a la izquierda"></v-btn>
+                      <v-btn size="small" color="grey-darken-2" icon="mdi-format-align-center" @click="alinearTexto('center')" title="Alinear al centro"></v-btn>
+                      <v-btn size="small" color="grey-darken-2" icon="mdi-format-align-right" @click="alinearTexto('right')" title="Alinear a la derecha"></v-btn>
+                    </v-btn-toggle>
+
+                    <!-- Botón Enlace HTML Nueva Pestaña -->
+                    <v-btn 
+                      size="small" 
+                      color="light-blue-darken-1" 
+                      variant="flat" 
+                      icon="mdi-open-in-new" 
+                      title="Enlace Pestaña Nueva"
+                      @click="insertarEnlaceHtml"
+                    >
+                      
+                    </v-btn>  
 
                     <!-- Botón Selector de Estilos -->
-<v-menu offset-y :close-on-content-click="false">
-  <template v-slot:activator="{ props }">
-    <v-btn size="small" color="purple" variant="flat" prepend-icon="mdi-palette" v-bind="props">
-      Estilo / Gradiente
-    </v-btn>
-  </template>
+                    <v-menu offset-y :close-on-content-click="false">
+                      <template v-slot:activator="{ props }">
+                        <v-btn size="small" color="purple" variant="flat" icon="mdi-palette" v-bind="props" title="   Estilo / Gradiente">
+                       
+                        </v-btn>
+                      </template>
 
-  <v-card width="300" class="pa-3">
-    <v-card-title class="text-subtitle-2 pa-0 mb-2">Selecciona un Gradiente</v-card-title>
-    
-    <!-- Opciones Predefinidas de Gradientes -->
-    <v-item-group v-model="selectedGradient" mandatory @update:model-value="aplicarEstilo">
-      <v-row dense>
-        <v-col v-for="(grad, index) in gradientes" :key="index" cols="6">
-          <v-item v-slot="{ isSelected, toggle }">
-            <v-card
-              :style="{ background: grad.value }"
-              height="50"
-              class="d-flex align-center justify-center cursor-pointer border"
-              @click="toggle"
-            >
-              <v-icon v-if="isSelected" icon="mdi-check" color="white"></v-icon>
-            </v-card>
-          </v-item>
-        </v-col>
-      </v-row>
-    </v-item-group>
-  </v-card>
-</v-menu>
+                      <v-card width="300" class="pa-3">
+                        <v-card-title class="text-subtitle-2 pa-0 mb-2">Selecciona un Gradiente</v-card-title>
+                        
+                        <!-- Opciones Predefinidas de Gradientes -->
+                        <v-item-group v-model="selectedGradient" mandatory @update:model-value="aplicarEstilo">
+                          <v-row dense>
+                            <v-col v-for="(grad, index) in gradientes" :key="index" cols="6">
+                              <v-item v-slot="{ isSelected, toggle }">
+                                <v-card
+                                  :style="{ background: grad.value }"
+                                  height="50"
+                                  class="d-flex align-center justify-center cursor-pointer border"
+                                  @click="toggle"
+                                >
+                                  <v-icon v-if="isSelected" icon="mdi-check" color="white"></v-icon>
+                                </v-card>
+                              </v-item>
+                            </v-col>
+                          </v-row>
+                        </v-item-group>
+                      </v-card>
+                    </v-menu>
 
-<!-- Botón Copiar iFrame del Visor -->
-<v-btn 
-  size="small" 
-  color="amber-darken-2" 
-  variant="flat" 
-  prepend-icon="mdi-code-json" 
-  @click="copiarIframeViewer"
->
-  Copiar iFrame Viewer
-</v-btn>
+                    <!-- Botón Copiar iFrame del Visor -->
+                    <v-btn 
+                      size="small" 
+                      color="amber-darken-2" 
+                      variant="flat" 
+                      icon="mdi-code-json" 
+                      title="Copiar iFrame Viewer"
+                      @click="copiarIframeViewer"
+                    >
+                    </v-btn>
                   </div>
 
                   <v-textarea
@@ -241,284 +276,341 @@
         
       </v-app>
     `,
-            setup() {
-                const editorRef = ref(null);
-                const revealRef = ref(null);
-                const fileInput = ref(null);
+      setup() {
+        const editorRef = ref(null);
+        const revealRef = ref(null);
+        const fileInput = ref(null);
 
-                // Estado de la presentación
-                const currentId = ref(null); // Guarda el UUID de Supabase si ya existe
-                const presentationTitle = ref('Mi Presentación Clase 1');
-                const markdownText = ref(`## Diapositiva 1\nEscribe aquí el contenido de tu clase...`);
+        // Estado de la presentación
+        const currentId = ref(null); // Guarda el UUID de Supabase si ya existe
+        const presentationTitle = ref('Mi Presentación Clase 1');
+        const markdownText = ref(`## Diapositiva 1\nEscribe aquí el contenido de tu clase...`);
 
-                const subiendoImagen = ref(false);
-                const cargandoGuardado = ref(false);
-                const dialogYouTube = ref(false);
-                const youtubeUrl = ref('');
+        const subiendoImagen = ref(false);
+        const cargandoGuardado = ref(false);
+        const dialogYouTube = ref(false);
+        const youtubeUrl = ref('');
 
-                let revealInstance = null;
-
-
-
-
-                const insertarEnCursor = (textoAInsertar) => {
-                    const textarea = editorRef.value.$el.querySelector('textarea');
-                    const inicio = textarea.selectionStart;
-                    const fin = textarea.selectionEnd;
-
-                    markdownText.value = markdownText.value.substring(0, inicio) + textoAInsertar + markdownText.value.substring(fin);
-
-                    nextTick(() => {
-                        textarea.selectionStart = textarea.selectionEnd = inicio + textoAInsertar.length;
-                        textarea.focus();
-                        actualizarReveal();
-                    });
-                };
-
-                const triggerFileInput = () => fileInput.value.click();
-
-                const subirImagenSupabase = async (event) => {
-                    const file = event.target.files[0];
-                    if (!file) return;
-
-                    subiendoImagen.value = true;
-                    try {
-                        const fileName = `${Date.now()}_${file.name}`;
-                        const {data, error} = await supabaseClient.storage
-                            .from('imagenes-diapositivas')
-                            .upload(fileName, file);
-
-                        if (error) throw error;
-
-                        const {data: publicUrlData} = supabaseClient.storage
-                            .from('imagenes-diapositivas')
-                            .getPublicUrl(fileName);
-
-                        insertarEnCursor(`\n![${file.name}](${publicUrlData.publicUrl})\n`);
-                    } catch (err) {
-                        alert('Error al subir la imagen: ' + err.message);
-                    } finally {
-                        subiendoImagen.value = false;
-                        event.target.value = '';
-                    }
-                };
-
-                const insertarYouTube = () => {
-                    if (!youtubeUrl.value) return;
-                    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                    const match = youtubeUrl.value.match(regExp);
-                    const videoId = (match && match[2].length === 11) ? match[2] : youtubeUrl.value;
-
-                    insertarEnCursor(`\n<iframe data-src="https://www.youtube.com/embed/${videoId}" width="100%" height="600px" frameborder="0" allowfullscreen></iframe>\n`);
-                    dialogYouTube.value = false;
-                    youtubeUrl.value = '';
-                };
-
-                const insertarDosColumnas = () => {
-                    const plantilla = `\n<div style="display: flex; gap: 20px; align-items: center;">\n  <div style="flex: 1;">\n\n### Columna 1\nTexto...\n\n  </div>\n  <div style="flex: 1;">\n\n### Columna 2\nTexto...\n\n  </div>\n</div>\n`;
-                    insertarEnCursor(plantilla);
-                };
-
-                const insertarIframe = () => {
-                    const url = prompt("URL del foro o página web:", "https://");
-                    if (url) {
-                        insertarEnCursor(`\n<iframe data-src="${url}" width="100%" height="1000px" style="border:none;"></iframe>\n`);
-                    }
-                };
+        let revealInstance = null;
 
 
 
 
+        const insertarEnCursor = (textoAInsertar) => {
+          const textarea = editorRef.value.$el.querySelector('textarea');
+          const inicio = textarea.selectionStart;
+          const fin = textarea.selectionEnd;
 
-                // Nuevos estados para la lista de archivos
-                const listaPresentaciones = ref([]);
-                const selectedPresentationId = ref(null);
-                const cargandoLista = ref(false);
+          markdownText.value = markdownText.value.substring(0, inicio) + textoAInsertar + markdownText.value.substring(fin);
 
-                // Obtener la lista de presentaciones disponibles desde Supabase
-                const obtenerPresentaciones = async () => {
-                    cargandoLista.value = true;
-                    try {
-                        const {data, error} = await supabaseClient
-                            .from('presentations')
-                            .select('id, title, content_markdown, theme_config')
-                            .order('updated_at', {ascending: false});
+          nextTick(() => {
+            textarea.selectionStart = textarea.selectionEnd = inicio + textoAInsertar.length;
+            textarea.focus();
+            actualizarReveal();
+          });
+        };
 
-                        if (error) throw error;
-                        listaPresentaciones.value = data || [];
-                    } catch (err) {
-                        console.error('Error al listar presentaciones:', err.message);
-                    } finally {
-                        cargandoLista.value = false;
-                    }
-                };
+        const triggerFileInput = () => fileInput.value.click();
 
-                // Cargar en el editor la presentación elegida
-                const cargarPresentacionSeleccionada = (id) => {
-                    const item = listaPresentaciones.value.find(p => p.id === id);
-                    if (!item) return;
+        const subirImagenSupabase = async (event) => {
+          const file = event.target.files[0];
+          if (!file) return;
 
-                    currentId.value = item.id;
-                    presentationTitle.value = item.title;
-                    markdownText.value = item.content_markdown;
+          subiendoImagen.value = true;
+          try {
+            const fileName = `${Date.now()}_${file.name}`;
+            const {data, error} = await supabaseClient.storage
+              .from('imagenes-diapositivas')
+              .upload(fileName, file);
 
-                    // Restaurar el gradiente si existe
-                    if (item.theme_config?.gradient) {
-                        const indexGradiente = gradientes.value.findIndex(g => g.value === item.theme_config.gradient);
-                        if (indexGradiente !== -1) {
-                            selectedGradient.value = indexGradiente;
-                        }
-                    }
+            if (error) throw error;
 
-                    actualizarReveal();
-                };
+            const {data: publicUrlData} = supabaseClient.storage
+              .from('imagenes-diapositivas')
+              .getPublicUrl(fileName);
 
-                // Ajuste en guardarPresentacion para sincronizar el ID y refrescar la lista
-                const guardarPresentacion = async () => {
-                    if (!presentationTitle.value.trim()) {
-                        alert('Por favor asigna un nombre al archivo.');
-                        return;
-                    }
+            insertarEnCursor(`\n![${file.name}](${publicUrlData.publicUrl})\n`);
+          } catch (err) {
+            alert('Error al subir la imagen: ' + err.message);
+          } finally {
+            subiendoImagen.value = false;
+            event.target.value = '';
+          }
+        };
 
-                    cargandoGuardado.value = true;
-                    try {
-                        const payload = {
-                            title: presentationTitle.value.trim(),
-                            content_markdown: markdownText.value,
-                            theme_config: {
-                                gradient: gradientes.value[selectedGradient.value].value
-                            },
-                            is_published: true,
-                            updated_at: new Date()
-                        };
+        const insertarYouTube = () => {
+          if (!youtubeUrl.value) return;
+          const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+          const match = youtubeUrl.value.match(regExp);
+          const videoId = (match && match[2].length === 11) ? match[2] : youtubeUrl.value;
 
-                        // Si ya teníamos un ID cargado, lo incluimos para que actualice en lugar de crear un duplicado
-                        if (currentId.value) {
-                            payload.id = currentId.value;
-                        }
+          insertarEnCursor(`\n<iframe data-src="https://www.youtube.com/embed/${videoId}" width="100%" height="600px" frameborder="0" allowfullscreen></iframe>\n`);
+          dialogYouTube.value = false;
+          youtubeUrl.value = '';
+        };
 
-                        // Hace UPSERT buscando coincidencias en la columna 'title'
-                        const {data, error} = await supabaseClient
-                            .from('presentations')
-                            .upsert(payload, {onConflict: 'title'})
-                            .select();
+        const insertarDosColumnas = () => {
+          const plantilla = `\n<div style="display: flex; gap: 20px; align-items: center;">\n  <div style="flex: 1;">\n\n### Columna 1\nTexto...\n\n  </div>\n  <div style="flex: 1;">\n\n### Columna 2\nTexto...\n\n  </div>\n</div>\n`;
+          insertarEnCursor(plantilla);
+        };
 
-                        if (error) throw error;
+        const insertarIframe = () => {
+          const url = prompt("URL del foro o página web:", "https://");
+          if (url) {
+            insertarEnCursor(`\n<iframe data-src="${url}" width="100%" height="800px" style="border:none;"></iframe>\n`);
+          }
+        };
 
-                        alert(`¡Proyecto "${presentationTitle.value}" guardado correctamente en Supabase!`);
-                    } catch (err) {
-                        alert('Error al guardar: ' + err.message);
-                    } finally {
-                        cargandoGuardado.value = false;
-                    }
-                };
-                // En tu setup()
 
-                // Configuración del menú de gradientes
-                const gradientes = ref([
-                    {name: 'Verde Esmeralda', value: 'linear-gradient(135deg, #052e16 0%, #14532d 50%, #15803d 100%)'},
-                    {name: 'Púrpura Neón', value: 'linear-gradient(135deg, #240b36 0%, #c31432 100%)'},
-                    {name: 'Azul Cósmico', value: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%)'},
-                    {name: 'Bosque Profundo', value: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)'},
-                    {name: 'Café Calidez', value: 'linear-gradient(135deg, #271c19 0%, #4a2e2b 50%, #78350f 100%)'}
-                ]);
 
-                const selectedGradient = ref(0);
 
-                const aplicarEstilo = () => {
-                    const gradientValue = gradientes.value[selectedGradient.value].value;
-                    nextTick(() => {
-                        if (revealRef.value) {
-                            revealRef.value.style.background = gradientValue;
-                        }
-                    });
-                };
 
-                const copiarIframeViewer = () => {
-                    if (!presentationTitle.value.trim()) {
-                        alert('Asigna un nombre al proyecto para obtener su enlace.');
-                        return;
-                    }
+        // Nuevos estados para la lista de archivos
+        const listaPresentaciones = ref([]);
+        const selectedPresentationId = ref(null);
+        const cargandoLista = ref(false);
 
-                    // Detecta el origen base (ejemplo: https://tusitio.com)
-                    const baseUrl = window.location.origin;
-                    const tituloEncoded = encodeURIComponent(presentationTitle.value.trim());
-                    const urlViewer = `${baseUrl}/slides/viewer.html?title=${tituloEncoded}`;
+        // Obtener la lista de presentaciones disponibles desde Supabase
+        const obtenerPresentaciones = async () => {
+          cargandoLista.value = true;
+          try {
+            const {data, error} = await supabaseClient
+              .from('presentations')
+              .select('id, title, content_markdown, theme_config')
+              .order('updated_at', {ascending: false});
 
-                    // Estructura del iFrame listo para incrustar
-                    const iframeCode = `<iframe src="${urlViewer}" width="100%" height="500px" style="border: none; border-radius: 8px;" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>`;
+            if (error) throw error;
+            listaPresentaciones.value = data || [];
+          } catch (err) {
+            console.error('Error al listar presentaciones:', err.message);
+          } finally {
+            cargandoLista.value = false;
+          }
+        };
 
-                    // Copia al portapapeles del usuario
-                    navigator.clipboard.writeText(iframeCode).then(() => {
-                        alert(`¡Código iFrame copiado al portapapeles!\n\n${iframeCode}`);
-                    }).catch(err => {
-                        console.error('Error al copiar: ', err);
-                        alert('No se pudo copiar automáticamente. Copia este código manualmente:\n\n' + iframeCode);
-                    });
-                };
+        // Cargar en el editor la presentación elegida
+        const cargarPresentacionSeleccionada = (id) => {
+          const item = listaPresentaciones.value.find(p => p.id === id);
+          if (!item) return;
 
-                const actualizarReveal = () => {
-                    nextTick(() => {
-                        if (revealInstance) revealInstance.destroy();
+          currentId.value = item.id;
+          presentationTitle.value = item.title;
+          markdownText.value = item.content_markdown;
 
-                        const slidesContainer = revealRef.value.querySelector('.slides');
-                        if (slidesContainer) {
-                            slidesContainer.innerHTML = `
+          // Restaurar el gradiente si existe
+          if (item.theme_config?.gradient) {
+            const indexGradiente = gradientes.value.findIndex(g => g.value === item.theme_config.gradient);
+            if (indexGradiente !== -1) {
+              selectedGradient.value = indexGradiente;
+            }
+          }
+
+          actualizarReveal();
+        };
+
+        // Ajuste en guardarPresentacion para sincronizar el ID y refrescar la lista
+        const guardarPresentacion = async () => {
+          if (!presentationTitle.value.trim()) {
+            alert('Por favor asigna un nombre al archivo.');
+            return;
+          }
+
+
+          cargandoGuardado.value = true;
+          try {
+            const payload = {
+              title: presentationTitle.value.trim(),
+              content_markdown: markdownText.value,
+              theme_config: {
+                gradient: gradientes.value[selectedGradient.value].value
+              },
+              is_published: true,
+              updated_at: new Date()
+            };
+
+            // Si ya teníamos un ID cargado, lo incluimos para que actualice en lugar de crear un duplicado
+            if (currentId.value) {
+              payload.id = currentId.value;
+            }
+
+            // Hace UPSERT buscando coincidencias en la columna 'title'
+            const {data, error} = await supabaseClient
+              .from('presentations')
+              .upsert(payload, {onConflict: 'title'})
+              .select();
+
+            if (error) throw error;
+
+            alert(`¡Proyecto "${presentationTitle.value}" guardado correctamente en Supabase!`);
+          } catch (err) {
+            alert('Error al guardar: ' + err.message);
+          } finally {
+            cargandoGuardado.value = false;
+          }
+        };
+        // En tu setup()
+
+        // Configuración del menú de gradientes
+        const gradientes = ref([
+          {name: 'Verde Esmeralda', value: 'linear-gradient(135deg, #052e16 0%, #14532d 50%, #15803d 100%)'},
+          {name: 'Púrpura Neón', value: 'linear-gradient(135deg, #240b36 0%, #c31432 100%)'},
+          {name: 'Azul Cósmico', value: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%)'},
+          {name: 'Bosque Profundo', value: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)'},
+          {name: 'Café Calidez', value: 'linear-gradient(135deg, #271c19 0%, #4a2e2b 50%, #78350f 100%)'}
+        ]);
+
+        const selectedGradient = ref(0);
+
+        const aplicarEstilo = () => {
+          const gradientValue = gradientes.value[selectedGradient.value].value;
+          nextTick(() => {
+            if (revealRef.value) {
+              revealRef.value.style.background = gradientValue;
+            }
+          });
+        };
+
+        //insertar salto
+        const insertarSaltoDobleHTML = () => {
+          insertarEnCursor('<br><br>');
+        };
+
+        // alinear texto
+        const alinearTexto = (alineacion) => {
+          const textarea = editorRef.value.$el.querySelector('textarea');
+          const inicio = textarea.selectionStart;
+          const fin = textarea.selectionEnd;
+          const textoSeleccionado = markdownText.value.substring(inicio, fin);
+
+          if (textoSeleccionado) {
+            const textoAlineado = `<div style="text-align: ${alineacion};">\n\n${textoSeleccionado}\n\n</div>`;
+            markdownText.value = markdownText.value.substring(0, inicio) + textoAlineado + markdownText.value.substring(fin);
+          } else {
+            insertarEnCursor(`<div style="text-align: ${alineacion};">\n\nTexto aquí...\n\n</div>\n`);
+          }
+
+          actualizarReveal();
+        };
+
+        // insertar enlace
+        const insertarEnlaceHtml = () => {
+          const textarea = editorRef.value.$el.querySelector('textarea');
+          const inicio = textarea.selectionStart;
+          const fin = textarea.selectionEnd;
+          const textoSeleccionado = markdownText.value.substring(inicio, fin);
+
+          const texto = prompt("Texto a mostrar en la diapositiva:", textoSeleccionado || "Texto disfrazado aquí");
+          if (!texto) return;
+
+          let url = prompt("Dirección web (URL):", "https://");
+          if (!url) return;
+
+          // Asegura que la URL tenga el protocolo para evitar problemas de rutas relativas
+          if (!/^https?:\/\//i.test(url)) {
+            url = 'https://' + url;
+          }
+
+          const htmlLink = `<a href="${url}" target="_blank" style="color: #40c4ff;">${texto}</a>`;
+
+          if (textoSeleccionado) {
+            markdownText.value = markdownText.value.substring(0, inicio) + htmlLink + markdownText.value.substring(fin);
+          } else {
+            insertarEnCursor(htmlLink);
+          }
+
+          actualizarReveal();
+        };
+
+        // copie iframeviewer
+
+        const copiarIframeViewer = () => {
+          if (!presentationTitle.value.trim()) {
+            alert('Asigna un nombre al proyecto para obtener su enlace.');
+            return;
+          }
+
+          // Detecta el origen base (ejemplo: https://tusitio.com)
+          const baseUrl = window.location.origin;
+          const tituloEncoded = encodeURIComponent(presentationTitle.value.trim());
+          const urlViewer = `${baseUrl}/slides/viewer.html?title=${tituloEncoded}`;
+
+          // Estructura del iFrame listo para incrustar
+          const iframeCode = `<iframe src="${urlViewer}" width="100%" height="500px" style="border: none; border-radius: 8px;" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>`;
+
+          // Copia al portapapeles del usuario
+          navigator.clipboard.writeText(iframeCode).then(() => {
+            alert(`¡Código iFrame copiado al portapapeles!\n\n${iframeCode}`);
+          }).catch(err => {
+            console.error('Error al copiar: ', err);
+            alert('No se pudo copiar automáticamente. Copia este código manualmente:\n\n' + iframeCode);
+          });
+        };
+
+        const actualizarReveal = () => {
+          nextTick(() => {
+            if (revealInstance) revealInstance.destroy();
+
+            const slidesContainer = revealRef.value.querySelector('.slides');
+            if (slidesContainer) {
+              slidesContainer.innerHTML = `
                 <section data-markdown>
                   <textarea data-template>${markdownText.value}</textarea>
                 </section>
             `;
-                        }
-
-                        revealInstance = new Reveal(revealRef.value, {
-                            plugins: [RevealMarkdown],
-                            embedded: true,
-                            keyboardCondition: 'focused'
-                        });
-
-                        revealInstance.initialize().then(() => {
-                            aplicarEstilo();
-                            obtenerPresentaciones();
-                        });
-                    });
-                };
-
-                onMounted(() => {
-                    actualizarReveal();
-                });
-
-                // ¡AQUÍ ESTABA EL DETALLE! Debes exponer gradientes, selectedGradient y aplicarEstilo al template:
-                return {
-                    markdownText,
-                    presentationTitle,
-                    editorRef,
-                    revealRef,
-                    fileInput,
-                    subiendoImagen,
-                    cargandoGuardado,
-                    dialogYouTube,
-                    youtubeUrl,
-                    gradientes,          // <-- Agregado
-                    selectedGradient,    // <-- Agregado
-                    aplicarEstilo,       // <-- Agregado
-                    listaPresentaciones,           // <-- Agregado
-                    selectedPresentationId,       // <-- Agregado
-                    cargandoLista,                // <-- Agregado
-                    cargarPresentacionSeleccionada, // <-- Agregado
-                    triggerFileInput,
-                    subirImagenSupabase,
-                    insertarYouTube,
-                    insertarDosColumnas,
-                    insertarIframe,
-                    copiarIframeViewer, // <-- Agregado aquí
-                    guardarPresentacion,
-                    actualizarReveal
-                };
             }
+
+            revealInstance = new Reveal(revealRef.value, {
+              plugins: [RevealMarkdown],
+              embedded: true,
+              keyboardCondition: 'focused'
+            });
+
+            revealInstance.initialize({center: false}).then(() => {
+              aplicarEstilo();
+              obtenerPresentaciones();
+            });
+          });
         };
 
-        createApp(App).use(vuetify).mount('#app');
-    </script>
+        onMounted(() => {
+          actualizarReveal();
+        });
+
+        // ¡AQUÍ ESTABA EL DETALLE! Debes exponer gradientes, selectedGradient y aplicarEstilo al template:
+        return {
+          markdownText,
+          presentationTitle,
+          editorRef,
+          revealRef,
+          fileInput,
+          subiendoImagen,
+          cargandoGuardado,
+          dialogYouTube,
+          youtubeUrl,
+          gradientes,          // <-- Agregado
+          selectedGradient,    // <-- Agregado
+          aplicarEstilo,       // <-- Agregado
+          insertarSaltoDobleHTML,
+          alinearTexto,
+          insertarEnlaceHtml,
+          listaPresentaciones,           // <-- Agregado
+          selectedPresentationId,       // <-- Agregado
+          cargandoLista,                // <-- Agregado
+          cargarPresentacionSeleccionada, // <-- Agregado
+          triggerFileInput,
+          subirImagenSupabase,
+          insertarYouTube,
+          insertarDosColumnas,
+          insertarIframe,
+          copiarIframeViewer, // <-- Agregado aquí
+          guardarPresentacion,
+          actualizarReveal
+        };
+      }
+    };
+
+    createApp(App).use(vuetify).mount('#app');
+  </script>
 </body>
 
 </html>
