@@ -126,98 +126,136 @@
               <v-col cols="12" md="6" class="d-flex flex-column">
                 <v-card class="pa-3 flex-grow-1" elevation="3">
                   
-                  <div class="d-flex flex-wrap gap-2 mb-3">
-                    <v-btn size="small" color="teal" variant="flat" prepend-icon="mdi-image-plus" @click="triggerFileInput" :loading="subiendoImagen">                    
-                    </v-btn>
-                    <input type="file" ref="fileInput" accept="image/*" class="d-none" @change="subirImagenSupabase">
+     <div class="d-flex flex-wrap align-center gap-1 mb-3 bg-grey-opacity pa-1 rounded">
 
-                    <v-btn size="small" color="red" variant="flat" prepend-icon="mdi-youtube" @click="dialogYouTube = true">
-                    </v-btn>
+  <!-- GRUPO 1: MULTIMEDIA (Imágenes y Videos) -->
+  <v-btn-toggle density="compact" variant="tonal" class="rounded">
+    <v-btn 
+      color="teal" 
+      icon="mdi-image-plus" 
+      title="Subir Imagen" 
+      @click="triggerFileInput" 
+      :loading="subiendoImagen"
+    ></v-btn>
+    <v-btn 
+      color="red" 
+      icon="mdi-youtube" 
+      title="Insertar Video de YouTube" 
+      @click="dialogYouTube = true"
+    ></v-btn>
+    <v-btn 
+      color="cyan" 
+      icon="mdi-web" 
+      title="Insertar Web / iFrame Foro" 
+      @click="insertarIframe"
+    ></v-btn>
+  </v-btn-toggle>
 
-                    <v-divider vertical class="mx-1"></v-divider>
+  <input type="file" ref="fileInput" accept="image/*" class="d-none" @change="subirImagenSupabase">
 
-                   
-                    <v-btn size="small" color="info" variant="tonal" prepend-icon="mdi-web" @click="insertarIframe">
-    
-                    </v-btn>
-      
-                    <!-- Botón para insertar columnas -->
-                  
-                     <v-btn density="compact" 
-                      variant="flat" size="small" variant="tonal" icon="mdi-view-column" title = "columns" @click="insertarDosColumnas">
-                      
-                    </v-btn>
-                    <!-- Botón para insertar salto doble HTML -->
-                    <v-btn 
-                      density="compact" 
-                      variant="flat"
-                      size="small"                            
-                      icon="mdi-format-line-spacing" 
-                      @click="insertarSaltoDobleHTML"
-                    >                      
-                    </v-btn>
+  <v-divider vertical class="mx-1 my-1"></v-divider>
 
-                    <!-- Grupo de Alineación de Texto -->
-                    <v-btn-toggle density="compact" variant="flat">
-                      <v-btn size="small" color="grey-darken-2" icon="mdi-format-align-left" @click="alinearTexto('left')" title="Alinear a la izquierda"></v-btn>
-                      <v-btn size="small" color="grey-darken-2" icon="mdi-format-align-center" @click="alinearTexto('center')" title="Alinear al centro"></v-btn>
-                      <v-btn size="small" color="grey-darken-2" icon="mdi-format-align-right" @click="alinearTexto('right')" title="Alinear a la derecha"></v-btn>
-                    </v-btn-toggle>
+        <!-- GRUPO 2: ESTRUCTURA Y FORMATO -->
+        <v-btn-toggle density="compact" variant="tonal" class="rounded">
+          <v-btn 
+            color="primary" 
+            icon="mdi-view-column" 
+            title="Insertar 2 Columnas" 
+            @click="insertarDosColumnas"
+          ></v-btn>
+          <v-btn 
+            color="deep-orange" 
+            icon="mdi-format-line-spacing" 
+            title="Insertar Doble Salto (<br><br>)" 
+            @click="insertarSaltoDobleHTML"
+          ></v-btn>
+        </v-btn-toggle>
 
-                    <!-- Botón Enlace HTML Nueva Pestaña -->
-                    <v-btn 
-                      size="small" 
-                      color="light-blue-darken-1" 
-                      variant="flat" 
-                      icon="mdi-open-in-new" 
-                      title="Enlace Pestaña Nueva"
-                      @click="insertarEnlaceHtml"
-                    >
-                      
-                    </v-btn>  
+        <v-divider vertical class="mx-1 my-1"></v-divider>
 
-                    <!-- Botón Selector de Estilos -->
-                    <v-menu offset-y :close-on-content-click="false">
-                      <template v-slot:activator="{ props }">
-                        <v-btn size="small" color="purple" variant="flat" icon="mdi-palette" v-bind="props" title="   Estilo / Gradiente">
-                       
-                        </v-btn>
-                      </template>
+        <!-- GRUPO 3: ALINEACIÓN DE TEXTO -->
+        <v-btn-toggle density="compact" variant="tonal" class="rounded" color="secondary">
+          <v-btn 
+            icon="mdi-format-align-left" 
+            title="Alinear a la Izquierda" 
+            @click="alinearTexto('left')"
+          ></v-btn>
+          <v-btn 
+            icon="mdi-format-align-center" 
+            title="Alinear al Centro" 
+            @click="alinearTexto('center')"
+          ></v-btn>
+          <v-btn 
+            icon="mdi-format-align-right" 
+            title="Alinear a la Derecha" 
+            @click="alinearTexto('right')"
+          ></v-btn>
+        </v-btn-toggle>
 
-                      <v-card width="300" class="pa-3">
-                        <v-card-title class="text-subtitle-2 pa-0 mb-2">Selecciona un Gradiente</v-card-title>
-                        
-                        <!-- Opciones Predefinidas de Gradientes -->
-                        <v-item-group v-model="selectedGradient" mandatory @update:model-value="aplicarEstilo">
-                          <v-row dense>
-                            <v-col v-for="(grad, index) in gradientes" :key="index" cols="6">
-                              <v-item v-slot="{ isSelected, toggle }">
-                                <v-card
-                                  :style="{ background: grad.value }"
-                                  height="50"
-                                  class="d-flex align-center justify-center cursor-pointer border"
-                                  @click="toggle"
-                                >
-                                  <v-icon v-if="isSelected" icon="mdi-check" color="white"></v-icon>
-                                </v-card>
-                              </v-item>
-                            </v-col>
-                          </v-row>
-                        </v-item-group>
-                      </v-card>
-                    </v-menu>
+        <v-divider vertical class="mx-1 my-1"></v-divider>
 
-                    <!-- Botón Copiar iFrame del Visor -->
-                    <v-btn 
-                      size="small" 
-                      color="amber-darken-2" 
-                      variant="flat" 
-                      icon="mdi-code-json" 
-                      title="Copiar iFrame Viewer"
-                      @click="copiarIframeViewer"
-                    >
-                    </v-btn>
-                  </div>
+        <!-- GRUPO 4: ENLACES, ESTILOS Y EMBED -->
+        <v-btn-toggle density="compact" variant="tonal" class="rounded">
+
+          <!-- Enlace Pestaña Nueva -->
+          <v-btn 
+            color="light-blue" 
+            icon="mdi-open-in-new" 
+            title="Insertar Enlace (Pestaña Nueva)" 
+            @click="insertarEnlaceHtml"
+          ></v-btn>
+
+          <!-- Selector de Gradiente / Estilo -->
+          <v-menu offset-y :close-on-content-click="false">
+            <template v-slot:activator="{ props }">
+              <v-btn 
+                color="purple" 
+                icon="mdi-palette" 
+                title="Cambiar Gradiente de Fondo" 
+                v-bind="props"
+              ></v-btn>
+      </template>
+
+      <v-card width="300" class="pa-3">
+        <v-card-title class="text-subtitle-2 pa-0 mb-2">Selecciona un Gradiente</v-card-title>
+        
+        <v-item-group v-model="selectedGradient" mandatory @update:model-value="aplicarEstilo">
+          <v-row dense>
+            <v-col v-for="(grad, index) in gradientes" :key="index" cols="6">
+              <v-item v-slot="{ isSelected, toggle }">
+                <v-card
+                  :style="{ background: grad.value }"
+                  height="50"
+                  class="d-flex align-center justify-center cursor-pointer border"
+                  @click="toggle"
+                >
+                  <v-icon v-if="isSelected" icon="mdi-check" color="white"></v-icon>
+                </v-card>
+              </v-item>
+            </v-col>
+          </v-row>
+        </v-item-group>
+      </v-card>
+    </v-menu>
+
+    <!-- Botón Abrir Visor en Pestaña Nueva -->
+    <v-btn 
+      color="light-green-darken-1" 
+      icon="mdi-open-in-app" 
+      title="Abrir Presentación Completa en Nueva Pestaña" 
+      @click="abrirVisorNuevaPestana"
+    ></v-btn>
+
+        <!-- Copiar iFrame del Visor -->
+        <v-btn 
+          color="amber-darken-2" 
+          icon="mdi-code-json" 
+          title="Copiar Código iFrame del Visor" 
+          @click="copiarIframeViewer"
+        ></v-btn>
+  </v-btn-toggle>
+
+</div>
 
                   <v-textarea
                     ref="editorRef"
@@ -521,6 +559,22 @@
           actualizarReveal();
         };
 
+
+        // abrir en pestana nueva
+
+        // Abrir el visor en una pestaña nueva del navegador
+        const abrirVisorNuevaPestana = () => {
+          if (!presentationTitle.value.trim()) {
+            alert('Asigna un nombre al proyecto para abrir su vista previa completa.');
+            return;
+          }
+          const baseUrl = window.location.origin;
+          const tituloEncoded = encodeURIComponent(presentationTitle.value.trim());
+          const urlVisor = `${baseUrl}/visor.html?title=${tituloEncoded}`;
+
+          window.open(urlVisor, '_blank');
+        };
+
         // copie iframeviewer
 
         const copiarIframeViewer = () => {
@@ -546,31 +600,82 @@
           });
         };
 
+        // Actualizar Reveal.js y mantener el foco en la diapositiva actual
         const actualizarReveal = () => {
+          // 1. Obtener la posición del cursor en el textarea
+          let slideIndex = 0;
+          if (editorRef.value) {
+            const textarea = editorRef.value.$el.querySelector('textarea');
+            if (textarea) {
+              const cursorPos = textarea.selectionStart;
+              const textoHastaCursor = markdownText.value.substring(0, cursorPos);
+
+              // Contar cuántas veces aparece el separador de diapositivas "---" antes del cursor
+              // (Buscamos "---" precedido/seguido de saltos de línea para ser precisos en Markdown)
+              const matches = textoHastaCursor.match(/^---$/gm);
+              if (matches) {
+                slideIndex = matches.length;
+              }
+            }
+          }
+
           nextTick(() => {
             if (revealInstance) revealInstance.destroy();
 
             const slidesContainer = revealRef.value.querySelector('.slides');
             if (slidesContainer) {
               slidesContainer.innerHTML = `
-                <section data-markdown>
-                  <textarea data-template>${markdownText.value}</textarea>
-                </section>
-            `;
+        <section data-markdown>
+          <textarea data-template>${markdownText.value}</textarea>
+        </section>
+      `;
             }
 
             revealInstance = new Reveal(revealRef.value, {
               plugins: [RevealMarkdown],
               embedded: true,
-              keyboardCondition: 'focused'
+              keyboardCondition: 'focused',
+              center: false // Mantenemos la configuración previa
             });
 
-            revealInstance.initialize({center: false}).then(() => {
+            revealInstance.initialize().then(() => {
               aplicarEstilo();
               obtenerPresentaciones();
+
+
+              // 2. Saltar a la diapositiva en la que el usuario está escribiendo actualmente
+              if (revealInstance && typeof revealInstance.slide === 'function') {
+                revealInstance.slide(slideIndex, 0);
+              }
             });
           });
         };
+
+        // const actualizarReveal = () => {
+        //   nextTick(() => {
+        //     if (revealInstance) revealInstance.destroy();
+
+        //     const slidesContainer = revealRef.value.querySelector('.slides');
+        //     if (slidesContainer) {
+        //       slidesContainer.innerHTML = `
+        //         <section data-markdown>
+        //           <textarea data-template>${markdownText.value}</textarea>
+        //         </section>
+        //     `;
+        //     }
+
+        //     revealInstance = new Reveal(revealRef.value, {
+        //       plugins: [RevealMarkdown],
+        //       embedded: true,
+        //       keyboardCondition: 'focused'
+        //     });
+
+        //     revealInstance.initialize({center: false}).then(() => {
+        //       aplicarEstilo();
+        //       obtenerPresentaciones();
+        //     });
+        //   });
+        // };
 
         onMounted(() => {
           actualizarReveal();
@@ -601,6 +706,7 @@
           subirImagenSupabase,
           insertarYouTube,
           insertarDosColumnas,
+          abrirVisorNuevaPestana,
           insertarIframe,
           copiarIframeViewer, // <-- Agregado aquí
           guardarPresentacion,
